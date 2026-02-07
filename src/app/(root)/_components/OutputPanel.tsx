@@ -42,34 +42,43 @@ function OutputPanel() {
   };
 
   const callGemini = async (text: string): Promise<string> => {
-    const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
-
     const prompt = `
-You are a helpful coding assistant. Always respond based on the code or error provided below, unless the user clearly refers to a different context. 
-
-Answer **concisely** (4–6 lines max), use **markdown formatting**, and explain with bullet points or numbered steps if needed. Avoid unnecessary fluff.
-
-If user asks for more detailed answers or explanation give answers upto 10 lines max
-
---- Code or Output ---
-${text}
-`;
-
-    const res = await fetch(endpoint, {
+  You are a helpful coding assistant. Always respond based on the code or error provided below, unless the user clearly refers to a different context. 
+  
+  Answer **concisely** (4–6 lines max), use **markdown formatting**, and explain with bullet points or numbered steps if needed. Avoid unnecessary fluff.
+  
+  If user asks for more detailed answers or explanation give answers upto 10 lines max
+  
+  --- Code or Output ---
+  ${text}
+  `;
+  
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+        "HTTP-Referer": window.location.origin,
+        "X-Title": "DoubtGPT",
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
+        model: "deepseek/deepseek-chat",
+        messages: [
+          { role: "system", content: "You are a helpful coding assistant." },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.3,
       }),
     });
-
+  
     const data = await res.json();
+  
     return (
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      data?.choices?.[0]?.message?.content ||
       "No response from DoubtGPT."
     );
   };
+  
 
   const handleAskDoubtGPT = async () => {
     if (!hasContent) return;
