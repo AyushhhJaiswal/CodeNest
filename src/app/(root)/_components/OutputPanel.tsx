@@ -10,6 +10,7 @@ import {
   X,
   Sparkles,
   Loader2,
+  Keyboard,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,7 +24,8 @@ type Message = {
 };
 
 function OutputPanel() {
-  const { output, error, isRunning } = useCodeEditorStore();
+  const { output, error, isRunning, customInput, setCustomInput } = useCodeEditorStore();
+  const [activeTab, setActiveTab] = useState<"output" | "input">("output");
   const [isCopied, setIsCopied] = useState(false);
   const [geminiLoading, setGeminiLoading] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -155,11 +157,29 @@ Instructions:
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-[#1e1e2e] rounded-md flex items-center justify-center ring-1 ring-gray-700">
-            <Terminal className="w-4 h-4 text-blue-400" />
-          </div>
-          <span className="text-sm font-semibold text-gray-300">Output</span>
+        <div className="flex items-center gap-2 bg-[#1e1e2e] rounded-lg p-1 ring-1 ring-gray-800">
+          <button
+            onClick={() => setActiveTab("output")}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-all font-medium text-sm ${
+              activeTab === "output"
+                ? "bg-[#2e2e40] text-blue-400 shadow-sm"
+                : "text-gray-400 hover:text-gray-300"
+            }`}
+          >
+            <Terminal className="w-4 h-4" />
+            Output
+          </button>
+          <button
+            onClick={() => setActiveTab("input")}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-all font-medium text-sm ${
+              activeTab === "input"
+                ? "bg-[#2e2e40] text-purple-400 shadow-sm"
+                : "text-gray-400 hover:text-gray-300"
+            }`}
+          >
+            <Keyboard className="w-4 h-4" />
+            Input
+          </button>
         </div>
 
         {hasContent && (
@@ -189,40 +209,57 @@ Instructions:
         )}
       </div>
 
-      {/* Output Section */}
+      {/* Panel Content */}
       <div className="relative bg-[#1e1e2e] rounded-xl p-4 h-[600px] overflow-y-auto font-mono text-sm">
-        {isRunning ? (
-          <RunningCodeSkeleton />
-        ) : error ? (
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-start gap-3 text-red-400"
-          >
-            <AlertTriangle className="w-5 h-5 mt-1" />
-            <div>
-              <div className="font-bold mb-1">Execution Error</div>
-              <pre className="whitespace-pre-wrap text-red-300">{error}</pre>
+        {activeTab === "input" ? (
+          <div className="w-full h-full flex flex-col">
+            <div className="flex items-center gap-2 text-gray-400 mb-2">
+              <Keyboard className="w-4 h-4" />
+              <span className="font-semibold text-xs">Standard Input (stdin)</span>
             </div>
-          </motion.div>
-        ) : output ? (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <div className="flex items-center gap-2 text-emerald-400 mb-2">
-              <CheckCircle className="w-5 h-5" />
-              <span className="font-semibold">Execution Successful</span>
-            </div>
-            <pre className="whitespace-pre-wrap text-gray-300">{output}</pre>
-          </motion.div>
-        ) : (
-          <div className="h-full flex flex-col items-center justify-center text-gray-500">
-            <Clock className="w-10 h-10 mb-3" />
-            <p className="text-center text-sm">
-              Run your code to see the output here.
-            </p>
+            <textarea
+              value={customInput}
+              onChange={(e) => setCustomInput(e.target.value)}
+              placeholder="Enter optional inputs here before running..."
+              className="w-full h-full bg-[#181825] text-gray-300 resize-none rounded-lg p-3 border border-gray-800/50 outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all font-mono text-sm placeholder:text-gray-600"
+            />
           </div>
+        ) : (
+          <>
+            {isRunning ? (
+              <RunningCodeSkeleton />
+            ) : error ? (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-start gap-3 text-red-400"
+              >
+                <AlertTriangle className="w-5 h-5 mt-1" />
+                <div>
+                  <div className="font-bold mb-1">Execution Error</div>
+                  <pre className="whitespace-pre-wrap text-red-300">{error}</pre>
+                </div>
+              </motion.div>
+            ) : output ? (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
+                <div className="flex items-center gap-2 text-emerald-400 mb-2">
+                  <CheckCircle className="w-5 h-5" />
+                  <span className="font-semibold">Execution Successful</span>
+                </div>
+                <pre className="whitespace-pre-wrap text-gray-300">{output}</pre>
+              </motion.div>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-gray-500">
+                <Clock className="w-10 h-10 mb-3" />
+                <p className="text-center text-sm">
+                  Run your code to see the output here.
+                </p>
+              </div>
+            )}
+          </>
         )}
 
         {/* DoubtGPT Chat */}

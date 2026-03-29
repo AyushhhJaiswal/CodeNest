@@ -1,6 +1,6 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { Activity, Code2, Star, Timer, TrendingUp, Trophy, UserIcon, Zap } from "lucide-react";
+import { Activity, Code2, Star, Timer, TrendingUp, Trophy, UserIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { Id } from "../../../../convex/_generated/dataModel";
 
@@ -19,13 +19,9 @@ interface ProfileHeaderProps {
   userData: {
     _id: Id<"users">;
     _creationTime: number;
-    proSince?: number | undefined;
-    lemonSqueezyCustomerId?: string | undefined;
-    lemonSqueezyOrderId?: string | undefined;
     name: string;
     userId: string;
     email: string;
-    isPro: boolean;
   };
   user: UserResource;
 }
@@ -91,23 +87,10 @@ function ProfileHeader({ userStats, userData, user }: ProfileHeaderProps) {
             alt="Profile"
             className="w-24 h-24 rounded-full border-4 border-gray-800/50 relative z-10 group-hover:scale-105 transition-transform"
           />
-          {userData.isPro && (
-            <div
-              className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-500 to-purple-600 p-2
-             rounded-full z-20 shadow-lg animate-pulse"
-            >
-              <Zap className="w-4 h-4 text-white" />
-            </div>
-          )}
         </div>
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl font-bold text-white">{userData.name}</h1>
-            {userData.isPro && (
-              <span className="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-sm font-medium">
-                Pro Member
-              </span>
-            )}
           </div>
           <p className="text-gray-400 flex items-center gap-2">
             <UserIcon className="w-4 h-4" />

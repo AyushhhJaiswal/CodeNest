@@ -7,7 +7,7 @@ type LanguageConfig = Record<
     id: string;
     label: string;
     logoPath: string;
-    pistonRuntime: { language: string; version: string };
+    judge0Id: number;
     monacoLanguage: string;
     defaultCode: string;
   }
@@ -18,7 +18,7 @@ export const LANGUAGE_CONFIG: LanguageConfig = {
     id: "javascript",
     label: "JavaScript",
     logoPath: "/javascript.png",
-    pistonRuntime: { language: "javascript", version: "18.15.0" }, // api that we're gonna be using
+    judge0Id: 93,
     monacoLanguage: "javascript",
     defaultCode: `// JavaScript Playground
 const numbers = [1, 2, 3, 4, 5];
@@ -40,7 +40,7 @@ console.log('Sum of numbers:', sum);`,
     id: "typescript",
     label: "TypeScript",
     logoPath: "/typescript.png",
-    pistonRuntime: { language: "typescript", version: "5.0.3" },
+    judge0Id: 94,
     monacoLanguage: "typescript",
     defaultCode: `// TypeScript Playground
 interface NumberArray {
@@ -77,7 +77,7 @@ console.log('Sum of numbers:', math.sum());`,
     id: "python",
     label: "Python",
     logoPath: "/python.png",
-    pistonRuntime: { language: "python", version: "3.10.0" },
+    judge0Id: 71,
     monacoLanguage: "python",
     defaultCode: `# Python Playground
 numbers = [1, 2, 3, 4, 5]
@@ -99,7 +99,7 @@ print(f"Sum of numbers: {numbers_sum}")`,
     id: "java",
     label: "Java",
     logoPath: "/java.png",
-    pistonRuntime: { language: "java", version: "15.0.2" },
+    judge0Id: 91,
     monacoLanguage: "java",
     defaultCode: `public class Main {
   public static void main(String[] args) {
@@ -141,7 +141,7 @@ print(f"Sum of numbers: {numbers_sum}")`,
     id: "go",
     label: "Go",
     logoPath: "/go.png",
-    pistonRuntime: { language: "go", version: "1.16.2" },
+    judge0Id: 95,
     monacoLanguage: "go",
     defaultCode: `package main
 
@@ -182,7 +182,7 @@ func main() {
     id: "rust",
     label: "Rust",
     logoPath: "/rust.png",
-    pistonRuntime: { language: "rust", version: "1.68.2" },
+    judge0Id: 73,
     monacoLanguage: "rust",
     defaultCode: `fn main() {
     // Create vector
@@ -215,7 +215,7 @@ func main() {
     id: "cpp",
     label: "C++",
     logoPath: "/cpp.png",
-    pistonRuntime: { language: "cpp", version: "10.2.0" },
+    judge0Id: 54,
     monacoLanguage: "cpp",
     defaultCode: `#include <iostream>
 #include <vector>
@@ -259,7 +259,7 @@ int main() {
     id: "csharp",
     label: "C#",
     logoPath: "/csharp.png",
-    pistonRuntime: { language: "csharp", version: "6.12.0" },
+    judge0Id: 51,
     monacoLanguage: "csharp",
     defaultCode: `using System;
 using System.Linq;
@@ -290,7 +290,7 @@ class Program {
     id: "ruby",
     label: "Ruby",
     logoPath: "/ruby.png",
-    pistonRuntime: { language: "ruby", version: "3.0.1" },
+    judge0Id: 72,
     monacoLanguage: "ruby",
     defaultCode: `# Create array
 numbers = [1, 2, 3, 4, 5]
@@ -314,7 +314,7 @@ puts "Sum of numbers: #{sum}"`,
     id: "swift",
     label: "Swift",
     logoPath: "/swift.png",
-    pistonRuntime: { language: "swift", version: "5.3.3" },
+    judge0Id: 83,
     monacoLanguage: "swift",
     defaultCode: `// Create array
 let numbers = [1, 2, 3, 4, 5]
@@ -342,6 +342,9 @@ export const THEMES: Theme[] = [
   { id: "github-dark", label: "GitHub Dark", color: "#0d1117" },
   { id: "monokai", label: "Monokai", color: "#272822" },
   { id: "solarized-dark", label: "Solarized Dark", color: "#002b36" },
+  { id: "dracula", label: "Dracula", color: "#282a36" },
+  { id: "night-owl", label: "Night Owl", color: "#011627" },
+  { id: "nord", label: "Nord", color: "#2e3440" },
 ];
 
 export const THEME_DEFINITONS = {
@@ -367,6 +370,78 @@ export const THEME_DEFINITONS = {
       "editorIndentGuide.background": "#21262d",
       "editor.selectionBackground": "#264f78",
       "editor.inactiveSelectionBackground": "#264f7855",
+    },
+  },
+  dracula: {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+      { token: "comment", foreground: "6272a4" },
+      { token: "string", foreground: "f1fa8c" },
+      { token: "keyword", foreground: "ff79c6" },
+      { token: "number", foreground: "bd93f9" },
+      { token: "type", foreground: "8be9fd" },
+      { token: "class", foreground: "8be9fd" },
+      { token: "function", foreground: "50fa7b" },
+      { token: "variable", foreground: "f8f8f2" },
+      { token: "operator", foreground: "ff79c6" },
+    ],
+    colors: {
+      "editor.background": "#282a36",
+      "editor.foreground": "#f8f8f2",
+      "editorLineNumber.foreground": "#6272a4",
+      "editor.selectionBackground": "#44475a",
+      "editor.lineHighlightBackground": "#44475a",
+      "editorCursor.foreground": "#f8f8f0",
+      "editor.selectionHighlightBackground": "#44475a",
+    },
+  },
+  "night-owl": {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+      { token: "comment", foreground: "637777" },
+      { token: "string", foreground: "ecc48d" },
+      { token: "keyword", foreground: "c792ea" },
+      { token: "number", foreground: "f78c6c" },
+      { token: "type", foreground: "ffcb6b" },
+      { token: "class", foreground: "ffcb6b" },
+      { token: "function", foreground: "82aaff" },
+      { token: "variable", foreground: "d6deeb" },
+      { token: "operator", foreground: "c792ea" },
+    ],
+    colors: {
+      "editor.background": "#011627",
+      "editor.foreground": "#d6deeb",
+      "editorLineNumber.foreground": "#4b6479",
+      "editor.selectionBackground": "#1d3b53",
+      "editor.lineHighlightBackground": "#011627",
+      "editorCursor.foreground": "#80a4c2",
+      "editor.selectionHighlightBackground": "#1d3b53",
+    },
+  },
+  nord: {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+      { token: "comment", foreground: "4c566a" },
+      { token: "string", foreground: "a3be8c" },
+      { token: "keyword", foreground: "81a1c1" },
+      { token: "number", foreground: "b48ead" },
+      { token: "type", foreground: "8fbcbb" },
+      { token: "class", foreground: "8fbcbb" },
+      { token: "function", foreground: "88c0d0" },
+      { token: "variable", foreground: "d8dee9" },
+      { token: "operator", foreground: "81a1c1" },
+    ],
+    colors: {
+      "editor.background": "#2e3440",
+      "editor.foreground": "#d8dee9",
+      "editorLineNumber.foreground": "#4c566a",
+      "editor.selectionBackground": "#434c5e",
+      "editor.lineHighlightBackground": "#3b4252",
+      "editorCursor.foreground": "#d8dee9",
+      "editor.selectionHighlightBackground": "#434c5e",
     },
   },
   monokai: {

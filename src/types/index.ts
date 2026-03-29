@@ -13,12 +13,7 @@ export interface Language {
   logoPath: string;
   monacoLanguage: string;
   defaultCode: string;
-  pistonRuntime: LanguageRuntime;
-}
-
-export interface LanguageRuntime {
-  language: string;
-  version: string;
+  judge0Id: number;
 }
 
 export interface ExecuteCodeResponse {
@@ -40,6 +35,7 @@ export interface ExecutionResult {
 export interface CodeEditorState {
   language: string;
   output: string;
+  customInput: string;
   isRunning: boolean;
   error: string | null;
   theme: string;
@@ -50,6 +46,7 @@ export interface CodeEditorState {
   setEditor: (editor: Monaco) => void;
   getCode: () => string;
   setLanguage: (language: string) => void;
+  setCustomInput: (input: string) => void;
   setTheme: (theme: string) => void;
   setFontSize: (fontSize: number) => void;
   runCode: () => Promise<void>;

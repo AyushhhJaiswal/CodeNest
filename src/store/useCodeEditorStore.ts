@@ -25,16 +25,19 @@ const getInitialState = () => {
   };
 };
 
-export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
+export const useCodeEditorStore = create<CodeEditorState & { customInput: string; setCustomInput: (input: string) => void }>((set, get) => {
   const initialState = getInitialState();
 
   return {
     ...initialState,
+    customInput: "",
     output: "",
     isRunning: false,
     error: null,
     editor: null,
     executionResult: null,
+
+    setCustomInput: (input: string) => set({ customInput: input }),
 
     getCode: () => get().editor?.getValue() || "",
 
@@ -85,45 +88,33 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
       set({ isRunning: true, error: null, output: "" });
 
       try {
-        const runtime = LANGUAGE_CONFIG[language].pistonRuntime;
-        const response = await fetch("https://emkc.org/api/v2/piston/execute", {
+        const judge0Id = LANGUAGE_CONFIG[language].judge0Id;
+        const response = await fetch("https://ce.judge0.com/submissions?base64_encoded=false&wait=true", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            language: runtime.language,
-            version: runtime.version,
-            files: [{ content: code }],
+            source_code: code,
+            language_id: judge0Id,
+            stdin: get().customInput,
           }),
         });
 
         const data = await response.json();
 
-        console.log("data back from piston:", data);
+        console.log("data back from judge0:", data);
 
-        // handle API erros
-        if (data.message) {
-          set({ error: data.message, executionResult: { code, output: "", error: data.message } });
+        // handle API errors
+        if (response.status >= 400 || data.error) {
+          const errMsg = data.error || "Failed to execute code";
+          set({ error: errMsg, executionResult: { code, output: "", error: errMsg } });
           return;
         }
 
-        // handle compilation errors
-        if (data.compile && data.compile.code !== 0) {
-          const error = data.compile.stderr || data.compile.output;
-          set({
-            error,
-            executionResult: {
-              code,
-              output: "",
-              error,
-            },
-          });
-          return;
-        }
-
-        if (data.run && data.run.code !== 0) {
-          const error = data.run.stderr || data.run.output;
+        // handle compilation or runtime errors from judge0
+        if (data.compile_output || data.stderr || data.status?.description !== "Accepted") {
+          const error = data.compile_output || data.stderr || data.status?.description || "Execution Error";
           set({
             error,
             executionResult: {
@@ -136,8 +127,8 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
         }
 
         // if we get here, execution was successful
-        const output = data.run.output;
-
+        const output = data.stdout || "";
+        
         set({
           output: output.trim(),
           error: null,
